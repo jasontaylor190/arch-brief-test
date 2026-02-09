@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 env:
-  LEANIX_API_TOKEN: ${{ LEANIX_API_TOKEN }}
-  LEANIX_SUBDOMAIN: ${{ LEANIX_SUBDOMAIN }}
+  LEANIX_API_TOKEN: ${{ secrets.LEANIX_API_TOKEN }}
+  LEANIX_SUBDOMAIN: ${{ secrets.LEANIX_SUBDOMAIN }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

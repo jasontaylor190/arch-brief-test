@@ -16,7 +16,7 @@ def _obtain_access_token() -> str:
     Returns:
         str: The LeanIX Access Token
     """
-    print(os.environ)
+    print(LEANIX_OAUTH2_URL)
     if not LEANIX_API_TOKEN:
         raise Exception('A valid token is required')
     response = requests.post(
@@ -48,7 +48,7 @@ def main():
 
     data = {'query': query}
     auth_header = f'Bearer {access_token}'
-    print(os.environ)
+    print(LEANIX_GRAPHQL_URL)
     response = requests.post(
         url=LEANIX_GRAPHQL_URL,
         headers={'Authorization': auth_header},

@@ -10,6 +10,7 @@ LEANIX_SUBDOMAIN = os.getenv('LEANIX_SUBDOMAIN')
 #LEANIX_OAUTH2_URL = f'https://{LEANIX_SUBDOMAIN}.leanix.net/services/mtm/v1/oauth2/token'
 LEANIX_GRAPHQL_URL = f'https://demo-us.leanix.net/services/pathfinder/v1/graphql'
 LEANIX_OAUTH2_URL = f'https://demo-us.leanix.net/services/mtm/v1/oauth2/token'
+LEANIX_UPLOAD_URL = f'https://demo-us.leanix.net/services/pathfinder/v1/graphql/upload'
 
 
 def _obtain_access_token() -> str:
@@ -19,7 +20,6 @@ def _obtain_access_token() -> str:
     Returns:
         str: The LeanIX Access Token
     """
-    print(LEANIX_OAUTH2_URL)
     if not LEANIX_API_TOKEN:
         raise Exception('A valid token is required')
     response = requests.post(
@@ -31,6 +31,9 @@ def _obtain_access_token() -> str:
     response.raise_for_status()
     return response.json().get('access_token')
 
+def loadpdf():
+    with open('archbrief.pdf', 'rb') as file:
+        return file.read()
 
 def main():
     """Executes a query against the LeanIX GraphQL API and prints
@@ -44,14 +47,13 @@ def main():
         factSheet(id: "abd01a88-dd54-4da0-a216-4262e7288005") {
           id
           description
-          fullName
+          name
         }
       }
       """
 
     data = {'query': query}
     auth_header = f'Bearer {access_token}'
-    print(LEANIX_GRAPHQL_URL)
     response = requests.post(
         url=LEANIX_GRAPHQL_URL,
         headers={'Authorization': auth_header},
@@ -59,8 +61,42 @@ def main():
     )
 
     response.raise_for_status()
-    print(response.json())
+    factsheet_id=response.json().get('data', {}).get('factSheet', {}).get('id')
+    factsheet_name=response.json().get('data', {}).get('factSheet', {}).get('name')
 
+    if not factsheet_id:
+        raise Exception('No factsheet found')
+    mutation = f"""
+        mutation createDocument {{
+            createDocument(
+                factSheetId: "{factsheet_id}"
+                name: "archbrief.pdf"
+                documentType: "documentation"
+                origin: "LX_STORAGE_SERVICE"
+            ) {{
+                id
+                name
+                url
+                factSheetId
+            }}
+        }}
+    """ 
+    form_data = {
+        'graphQLRequest': (
+            None, 
+             json.dumps({'query': mutation})
+            ),
+        'file': ('archbrief.pdf', loadpdf(), 'application/pdf')
+    }
+
+    response = requests.post(
+        url=LEANIX_UPLOAD_URL,
+        headers={'Authorization': auth_header,
+                 'Accept': 'application/json'},
+        files=form_data
+        )
+    
+    print(response.json())
 
 if __name__ == '__main__':
     main()

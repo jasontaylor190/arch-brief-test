@@ -6,8 +6,11 @@ import json
 load_dotenv(override=True)
 LEANIX_API_TOKEN = os.getenv('LEANIX_API_TOKEN')
 LEANIX_SUBDOMAIN = os.getenv('LEANIX_SUBDOMAIN')
-LEANIX_GRAPHQL_URL = f'https://{LEANIX_SUBDOMAIN}.leanix.net/services/pathfinder/v1/graphql'
-LEANIX_OAUTH2_URL = f'https://{LEANIX_SUBDOMAIN}.leanix.net/services/mtm/v1/oauth2/token'
+#LEANIX_GRAPHQL_URL = f'https://{LEANIX_SUBDOMAIN}.leanix.net/services/pathfinder/v1/graphql'
+#LEANIX_OAUTH2_URL = f'https://{LEANIX_SUBDOMAIN}.leanix.net/services/mtm/v1/oauth2/token'
+LEANIX_GRAPHQL_URL = f'https://demo-us.leanix.net/services/pathfinder/v1/graphql'
+LEANIX_OAUTH2_URL = f'https://demo-us.leanix.net/services/mtm/v1/oauth2/token'
+
 
 def _obtain_access_token() -> str:
     """Obtains a LeanIX Access token using the Technical User generated

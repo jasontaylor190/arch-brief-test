@@ -1,7 +1,9 @@
 import os
+from dotenv import load_dotenv
 import requests
 import json
 
+load_dotenv(override=True)
 LEANIX_API_TOKEN = os.getenv('LEANIX_API_TOKEN')
 LEANIX_SUBDOMAIN = os.getenv('LEANIX_SUBDOMAIN')
 LEANIX_GRAPHQL_URL = f'https://{LEANIX_SUBDOMAIN}.leanix.net/services/pathfinder/v1/graphql'
@@ -14,6 +16,7 @@ def _obtain_access_token() -> str:
     Returns:
         str: The LeanIX Access Token
     """
+    print(os.environ)
     if not LEANIX_API_TOKEN:
         raise Exception('A valid token is required')
     response = requests.post(
@@ -30,6 +33,7 @@ def main():
     """Executes a query against the LeanIX GraphQL API and prints
     the output.
     """
+
     access_token = _obtain_access_token()
 
     query = """
@@ -44,7 +48,7 @@ def main():
 
     data = {'query': query}
     auth_header = f'Bearer {access_token}'
-
+    print(os.environ)
     response = requests.post(
         url=LEANIX_GRAPHQL_URL,
         headers={'Authorization': auth_header},

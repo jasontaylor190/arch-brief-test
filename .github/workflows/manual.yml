@@ -28,9 +28,7 @@ jobs:
           python-version: 3.14
           
       - name: Check DNS resolution
-        run: |
-          ping -c 4 google.com
-          ping -c 4 pypi.org
+        run: ping -c 4 demo-us.leanix.net
 
       - name: Run Python script
         run: uv run python main.py

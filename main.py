@@ -11,7 +11,7 @@ LEANIX_SUBDOMAIN = os.getenv('LEANIX_SUBDOMAIN')
 LEANIX_GRAPHQL_URL = f'https://demo-us.leanix.net/services/pathfinder/v1/graphql'
 LEANIX_OAUTH2_URL = f'https://demo-us.leanix.net/services/mtm/v1/oauth2/token'
 LEANIX_UPLOAD_URL = f'https://demo-us.leanix.net/services/pathfinder/v1/graphql/upload'
-
+factsheet_id="abd01a88-dd54-4da0-a216-4262e7288005"
 
 def _obtain_access_token() -> str:
     """Obtains a LeanIX Access token using the Technical User generated
@@ -42,27 +42,27 @@ def main():
 
     access_token = _obtain_access_token()
 
-    query = """
-      query MyQuery {
-        factSheet(id: "abd01a88-dd54-4da0-a216-4262e7288005") {
+    query = f"""
+      query MyQuery {{
+        factSheet(id: "{factsheet_id}") {{
           id
           description
           name
-        }
-      }
+        }}
+      }}
       """
     
-    update = """
-      mutation MyMutation{
+    update = f"""
+      mutation MyMutation{{
         updateFactSheet(
-            id: "abd01a88-dd54-4da0-a216-4262e7288005" 
-            patches: {op: replace, path: "/description", value: "This is a placeholder for the architecture brief content."} ) {
-                factSheet {
+            id: "{factsheet_id}" 
+            patches: {{op: replace, path: "/description", value: "This is a placeholder for the architecture brief content."}} ) {{
+                factSheet {{
                     id
                     description
-                }
-            }
-      }
+                }}
+            }}
+      }}
       """
 
     data = {'query': update}
@@ -74,9 +74,6 @@ def main():
     )
 
     response.raise_for_status()
-    factsheet_id=response.json().get('data', {}).get('factSheet', {}).get('id')
-    factsheet_id="abd01a88-dd54-4da0-a216-4262e7288005"
-    factsheet_name=response.json().get('data', {}).get('factSheet', {}).get('name')
 
     if not factsheet_id:
         raise Exception('No factsheet found')

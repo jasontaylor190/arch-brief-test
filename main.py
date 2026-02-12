@@ -51,8 +51,21 @@ def main():
         }
       }
       """
+    
+    update = """
+      mutation MyMutation{
+        updateFactSheet(
+            id: "abd01a88-dd54-4da0-a216-4262e7288005" 
+            patches: {op: replace, path: "/description", value: "This is a placeholder for the architecture brief content."} ) {
+                factSheet {
+                    id
+                    description
+                }
+            }
+      }
+      """
 
-    data = {'query': query}
+    data = {'query': update}
     auth_header = f'Bearer {access_token}'
     response = requests.post(
         url=LEANIX_GRAPHQL_URL,
@@ -62,6 +75,7 @@ def main():
 
     response.raise_for_status()
     factsheet_id=response.json().get('data', {}).get('factSheet', {}).get('id')
+    factsheet_id="abd01a88-dd54-4da0-a216-4262e7288005"
     factsheet_name=response.json().get('data', {}).get('factSheet', {}).get('name')
 
     if not factsheet_id:
